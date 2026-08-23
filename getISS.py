@@ -10,7 +10,7 @@ from datetime import datetime
 url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
 response = requests.get(url)
 print(response.status_code)
-print(response.text[:200])
+
 
 lines = response.text.strip().split('\n')
 
