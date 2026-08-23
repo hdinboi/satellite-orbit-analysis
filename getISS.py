@@ -9,7 +9,7 @@ from datetime import datetime
 
 url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
 response = requests.get(url)
-print(response.status_code)
+
 
 
 lines = response.text.strip().split('\n')
@@ -29,6 +29,7 @@ t = ts.now()
 geocentric = satellite.at(t)
 subpoint = geocentric.subpoint()
 
+eccentricity = satellite.model.ecco
 latitude = subpoint.latitude.degrees
 longitude = subpoint.longitude.degrees
 altitude = subpoint.elevation.km
@@ -47,8 +48,8 @@ with open(filename, mode = 'a', newline='') as f:
     
     #if file is new, write header
     if not fileExists:
-        writer.writerow(["timestamp", "satellite", "latitude", "longitude", "altitude_km"])
+        writer.writerow(["timestamp", "satellite", "latitude", "longitude", "altitude_km", "eccentricity"])
         
-    writer.writerow([datetime.now(), stationName, latitude, longitude, altitude])
+    writer.writerow([datetime.now(), stationName, latitude, longitude, altitude, eccentricity])
 
 print(f"Data saved to {filename}")

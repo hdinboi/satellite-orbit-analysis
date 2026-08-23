@@ -25,11 +25,11 @@ satellite = EarthSatellite(line1, line2, stationName, ts)
 #getting mean motion of ISS
 
 noKozai = satellite.model.no_kozai
-print(noKozai)
+
 #noKozai is in radians per minute, we need revolutions per day of the satellite
 
 meanMotion = (noKozai/ (2*(math.pi)) * 1440)
-print(meanMotion)
+print(f"{stationName} orbits Earth {meanMotion:.4f} times in 24 hours.")
 
 #calculate observed period in minutes
 
