@@ -3,11 +3,11 @@ from skyfield.api import EarthSatellite, load
 import csv
 import os
 from datetime import datetime
-
+from config import url, earthRaidusKM, filename
 
 #getting data for the ISS
 
-url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
+
 response = requests.get(url)
 
 
@@ -27,12 +27,14 @@ satellite = EarthSatellite(line1, line2, stationName, ts)
 t = ts.now()
     #where is satellite in relation to centre of earth at this exact time
 geocentric = satellite.at(t)
+
+distFromCentre = geocentric.distance().km
 subpoint = geocentric.subpoint()
 
 eccentricity = satellite.model.ecco
 latitude = subpoint.latitude.degrees
 longitude = subpoint.longitude.degrees
-altitude = subpoint.elevation.km
+altitude = distFromCentre - earthRaidusKM
 
 print(f"Satellite: {stationName}")
 print(f"Latitude: :{latitude:.4f}°")
@@ -40,7 +42,7 @@ print(f"Longitude: {longitude:.4f}°")
 print(f"Altitude: {altitude:.4f}km")
 
 #save data to a CSV file for later analysis and prediction
-filename = "iss_data.csv"
+
 fileExists = os.path.exists(filename)
 
 with open(filename, mode = 'a', newline='') as f:

@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from config import filename
 
-filename = "iss_data.csv"
+
 #creating dataframe to read columns from the CSV file
 df = pd.read_csv(filename)
 

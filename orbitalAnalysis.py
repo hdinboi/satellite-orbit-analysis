@@ -2,11 +2,11 @@ import requests
 from skyfield.api import EarthSatellite, load
 import math
 from datetime import datetime
-
+from config import mu, earthRaidusKM, url
 
 #getting data for the ISS
 
-url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
+
 response = requests.get(url)
 
 
@@ -37,8 +37,6 @@ T = 1440/meanMotion
 print(f"Observed period: {T:.4f} minutes")
 
 #calculate theoretical period
-earthRaidusKM = 6371
-mu = 398600.4418
 t = ts.now()
 geocentric = satellite.at(t)
 subpoint = geocentric.subpoint()
