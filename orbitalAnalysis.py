@@ -39,8 +39,9 @@ print(f"Observed period: {T:.4f} minutes")
 #calculate theoretical period
 t = ts.now()
 geocentric = satellite.at(t)
+distFromCentre = geocentric.distance().km
 subpoint = geocentric.subpoint()
-altitide = subpoint.elevation.km
+altitide = distFromCentre - earthRaidusKM
 
     #semi major axis approximation in km
 a = earthRaidusKM + altitide
@@ -50,7 +51,7 @@ theoT = ((2*math.pi) * math.sqrt(a**3/mu))/60
 print(f"Theoretical orbital period: {theoT:.4f} mintues")
 
 #finding the percentage difference between the two
-percentDiff = abs(T - theoT) / T*100
+percentDiff = (abs(T - theoT) / T)*100
 print(f"Difference: {percentDiff:.6f}%")
 
 
