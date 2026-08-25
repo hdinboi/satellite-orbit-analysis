@@ -5,11 +5,14 @@ import os
 from datetime import datetime
 from config import url, earthRaidusKM, filename
 
-#getting data for the ISS
+#getting data for the ISS 
 
 
 response = requests.get(url)
 
+if response.status_code != 200 or "<!DOCTYPE" in response.text:
+    print("Failed to get valid TLE data. Skipping this run.")
+    exit()
 
 
 lines = response.text.strip().split('\n')
