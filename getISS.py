@@ -44,7 +44,7 @@ print(f"Latitude: :{latitude:.4f}°")
 print(f"Longitude: {longitude:.4f}°")
 print(f"Altitude: {altitude:.4f}km")
 
-#save data to a CSV file for later analysis and prediction
+#save data to a CSV file
 
 fileExists = os.path.exists(filename)
 
