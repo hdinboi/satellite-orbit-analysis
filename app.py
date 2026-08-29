@@ -11,6 +11,14 @@ st.title("ISS Orbit Analysis and Prediction")
 def getDataModel():
     return loadModel()
 
+@st.cache_data(ttl=1800)
+def getOrbitalPeriod():
+    return orbitalPeriod()
+
+@st.cache_data(ttl=1800)
+def getPhysicsPrediction(daysAhead):
+    return predictPhysicsPosition(daysAhead)
+
 model, df, stationName = getDataModel()
 
 st.write(f"Tracking : {stationName}")
@@ -29,7 +37,7 @@ overviewCol2.metric("Time span", f"{duration.days}d {duration.seconds // 3600}h"
 overviewCol3.metric("Latest reading", endDate.strftime('%Y-%m-%d %H:%M'))
 
 st.subheader("Orbital Period: Observed vs Theoretical")
-periodStation, meanMotion, observedPeriod, theoreticalPeriod, percentDiff = orbitalPeriod()
+periodStation, meanMotion, observedPeriod, theoreticalPeriod, percentDiff = getOrbitalPeriod()
 
 st.caption(f"{periodStation} orbits Earth {meanMotion:.2f} times every 24 hours")
 
@@ -68,7 +76,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### Physics-based (SGP4)")
-    physicsStation, futureDate, latitude, longitude, physicsAltitude = predictPhysicsPosition(daysAhead)
+    physicsStation, futureDate, latitude, longitude, physicsAltitude = getPhysicsPrediction(daysAhead)
     st.metric("Predicted Altitude", f"{physicsAltitude:.2f} km")
     st.caption(f"For {futureDate.strftime('%Y-%m-%d %H:%M')} UTC")
     st.caption(f"Lat: {latitude:.2f}°, Lon: {longitude:.2f}°")

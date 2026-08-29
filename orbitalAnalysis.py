@@ -10,6 +10,9 @@ def orbitalPeriod():
 
     response = requests.get(url)
 
+    if response.status_code != 200 or "<!DOCTYPE" in response.text:
+        raise ValueError("Failed to get valid TLE data from Celestrak.")
+
     lines = response.text.strip().split('\n')
 
     #split data into 3 seperate lines
