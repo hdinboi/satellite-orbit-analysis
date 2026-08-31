@@ -1,9 +1,10 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 from predictData import loadModel, predictDataAltitude
-from predictPhysics import predictPhysicsPosition
+from predictPhysics import predictPhysicsPosition, fetchSatellite
 from evaluateModel import evaluateErrorModel
 from orbitalAnalysis import orbitalPeriod
+from config import earthRaidusKM
 
 st.title("ISS Orbit Analysis and Prediction")
 
@@ -15,9 +16,9 @@ def getDataModel():
 def getOrbitalPeriod():
     return orbitalPeriod()
 
-@st.cache_data(ttl=1800)
-def getPhysicsPrediction(daysAhead):
-    return predictPhysicsPosition(daysAhead)
+@st.cache_resource(ttl=1800)
+def getSatellite():
+    return fetchSatellite()
 
 model, df, stationName = getDataModel()
 
@@ -76,7 +77,19 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### Physics-based (SGP4)")
-    physicsStation, futureDate, latitude, longitude, physicsAltitude = getPhysicsPrediction(daysAhead)
+    satellite, stationName_, ts = getSatellite()
+
+    from datetime import datetime, timedelta, UTC
+    futureDate = datetime.now(UTC) + timedelta(days=daysAhead)
+    futureT = ts.utc(futureDate.year, futureDate.month, futureDate.day, futureDate.hour)
+
+    geocentric = satellite.at(futureT)
+    subpoint = geocentric.subpoint()
+    distFromCentre = geocentric.distance().km
+    physicsAltitude = distFromCentre - earthRaidusKM
+    latitude = subpoint.latitude.degrees
+    longitude = subpoint.longitude.degrees
+
     st.metric("Predicted Altitude", f"{physicsAltitude:.2f} km")
     st.caption(f"For {futureDate.strftime('%Y-%m-%d %H:%M')} UTC")
     st.caption(f"Lat: {latitude:.2f}°, Lon: {longitude:.2f}°")

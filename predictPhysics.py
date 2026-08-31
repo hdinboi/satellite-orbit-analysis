@@ -4,8 +4,11 @@ from datetime import datetime, timedelta, UTC
 from config import mu, earthRaidusKM, url
 
 
-def predictPhysicsPosition(daysAhead):
+def fetchSatellite():
     response = requests.get(url)
+
+    if response.status_code != 200 or "<!DOCTYPE" in response.text:
+        raise ValueError("Failed to get valid TLE data from Celestrak.")
 
     lines = response.text.strip().split('\n')
 
@@ -15,6 +18,12 @@ def predictPhysicsPosition(daysAhead):
 
     ts = load.timescale()
     satellite = EarthSatellite(line1, line2, stationName, ts)
+
+    return satellite, stationName, ts
+
+
+def predictPhysicsPosition(daysAhead):
+    satellite, stationName, ts = fetchSatellite()
 
     futureDate = datetime.now(UTC) + timedelta(days=daysAhead)
 
